@@ -1,20 +1,28 @@
 const { Client, GatewayIntentBits } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const colorManager = require('./utils/colorManager'); // 新增這行
+const colorManager = require('./utils/colorManager');
 const express = require('express');
-
 const app = express();
+const PORT = process.env.PORT || 3000;
 
+// Express 路由
 app.get('/', (req, res) => {    
     console.log("uptimeRobot enter");
     res.send('color bot is running');
 });
 
+// 啟動 Express 服務器
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
+// Discord 客戶端設置
 const client = new Client({ 
     intents: [
         GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent
     ] 
 });
 
@@ -36,31 +44,26 @@ for (const file of eventFiles) {
 // 讀取設定檔
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../config.json')));
 
-// 新增這段代碼來每30秒更換一次身份組顏色
+// Bot 就緒事件
 client.once('ready', () => {
     console.log(`Bot已登入為 ${client.user.tag}`);
-    
-    setInterval(async () => {
-        // 遍歷所有伺服器
-        client.guilds.cache.forEach(async (guild) => {
-            const role = guild.roles.cache.find(r => r.name === '自動更換'); // 替換為您的身份組名稱
-            if (!role) {
-                console.log(`在伺服器 ${guild.name} 中找不到指定身份組`);
-                return;
-            }
-
-            const newColor = colorManager.getRandomColor();
-            try {
-                await role.setColor(newColor);
-                console.log(`伺服器 ${guild.name} 中的身份組 ${role.name} 顏色已更改為 ${newColor}`);
-            } catch (error) {
-                console.error(`在伺服器 ${guild.name} 更改顏色時發生錯誤：`, error);
-            }
-        });
-    }, 30000); // 30秒
+    // 定期更新顏色
+    setInterval(() => {
+        colorManager.updateColors(client);
+    }, 30000); // 每30秒執行一次
 });
 
-// Login to Discord
-client.login(config.token).then(() => {
-    console.log(`Logged in as ${client.user.tag}!`);
-}).catch(console.error);
+// 錯誤處理
+client.on('error', error => {
+    console.error('Discord client error:', error);
+});
+
+// 登入 Bot
+client.login(config.token);
+
+// 優雅關閉
+process.on('SIGINT', () => {
+    console.log('正在關閉 Bot...');
+    client.destroy();
+    process.exit(0);
+});
