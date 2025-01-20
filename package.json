@@ -4,12 +4,12 @@
   "description": "一個可以每小時更改身份組顏色的 Discord 機器人",
   "main": "src/index.js",
   "scripts": {
-    "start": "node --expose-gc discordbot.js"
+    "start": "node src/index.js"
   },
   "dependencies": {
-    "discord.js": "^14.17.3",
+    "discord.js": "^14.x",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2"
+    "express": "^4.x"
   },
   "author": "你的名字",
   "license": "MIT",

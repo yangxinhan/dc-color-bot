@@ -1,14 +1,20 @@
 const { Client, GatewayIntentBits } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const colorManager = require('./utils/colorManager'); // 新增這行
+const colorManager = require('./utils/colorManager');
 const express = require('express');
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {    
-    console.log("uptimeRobot enter");
-    res.send('color bot is running');
+// Express 路由
+app.get('/', (req, res) => {
+    res.send('Discord bot is running!');
+});
+
+// 啟動 Express 伺服器
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
 
 const client = new Client({ 
