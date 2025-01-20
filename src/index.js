@@ -56,7 +56,7 @@ client.once('ready', () => {
                 console.error(`在伺服器 ${guild.name} 更改顏色時發生錯誤：`, error);
             }
         });
-    }, 1000); // 30秒 30000毫秒
+    }, 30000); // 30秒 30000毫秒
 });
 
 // Login to Discord
