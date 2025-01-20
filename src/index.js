@@ -5,7 +5,7 @@ const colorManager = require('./utils/colorManager');
 const express = require('express');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
 // Express 路由
 app.get('/', (req, res) => {
