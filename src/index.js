@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, PermissionsBitField } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const colorManager = require('./utils/colorManager');
@@ -54,12 +54,26 @@ client.once('ready', () => {
                 return;
             }
 
+            // 檢查 Bot 是否有管理角色權限
+            const botMember = guild.members.cache.get(client.user.id);
+            if (!botMember.permissions.has(PermissionsBitField.Flags.ManageRoles)) {
+                console.log(`Bot 在 ${guild.name} 中缺少管理角色權限`);
+                return;
+            }
+
+            // 檢查 Bot 角色位置是否高於目標角色
+            const botRole = botMember.roles.highest;
+            if (botRole.position <= role.position) {
+                console.log(`Bot 角色位置必須高於目標角色 - ${guild.name}`);
+                return;
+            }
+
             const newColor = colorManager.getRandomColor();
             try {
                 await role.setColor(newColor);
-                console.log(`伺服器 ${guild.name} 中的身份組 ${role.name} 顏色已更改為 ${newColor}`);
+                console.log(`成功更新 ${guild.name} 的角色顏色`);
             } catch (error) {
-                console.error(`在伺服器 ${guild.name} 更改顏色時發生錯誤：`, error);
+                console.error(`更新顏色失敗 ${guild.name}:`, error.message);
             }
         });
     }, 30000); // 30秒 30000毫秒
