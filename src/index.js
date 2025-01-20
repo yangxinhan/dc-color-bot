@@ -36,14 +36,13 @@ for (const file of eventFiles) {
 // 讀取設定檔
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../config.json')));
 
-// 新增這段代碼來每30秒更換一次身份組顏色
 client.once('ready', () => {
     console.log(`Bot已登入為 ${client.user.tag}`);
     
     setInterval(async () => {
         // 遍歷所有伺服器
         client.guilds.cache.forEach(async (guild) => {
-            const role = guild.roles.cache.find(r => r.name === '自動更換'); // 替換為您的身份組名稱
+            const role = guild.roles.cache.find(r => r.name === '七彩霓虹燈'); // 替換為您的身份組名稱
             if (!role) {
                 console.log(`在伺服器 ${guild.name} 中找不到指定身份組`);
                 return;
@@ -57,7 +56,7 @@ client.once('ready', () => {
                 console.error(`在伺服器 ${guild.name} 更改顏色時發生錯誤：`, error);
             }
         });
-    }, 30000); // 30秒
+    }, 1000); // 30秒 30000毫秒
 });
 
 // Login to Discord
